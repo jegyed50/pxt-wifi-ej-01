@@ -140,7 +140,67 @@ namespace WiFiBit {
         writeToSerial("AT+CIPCLOSE", pauseBaseValue * 3)
     }
 
-   
+   /**
+     * Execute HTTPS method.
+     * @param method HTTPS method, eg: HttpMethod.GET
+        * @param host Host, eg: "google.com"
+            * @param port Port, eg: 80
+                * @param urlPath Path, eg: "/search?q=something"
+                    * @param headers Headers
+                        * @param body Body
+    */
+    //% weight=96
+    //% blockId="wfb_https" block="execute HTTPS method (SSL) %method|host: %host|port: %port|path: %urlPath||headers: %headers|body: %body"
+    export function executeHttpSMethod(method: HttpMethod, host: string, port: number, urlPath: string, headers?: string, body?: string): void {
+        let myMethod: string
+        switch (method) {
+            case HttpMethod.GET: myMethod = "GET"; break;
+            case HttpMethod.POST: myMethod = "POST"; break;
+            case HttpMethod.PUT: myMethod = "PUT"; break;
+            case HttpMethod.HEAD: myMethod = "HEAD"; break;
+            case HttpMethod.DELETE: myMethod = "DELETE"; break;
+            case HttpMethod.PATCH: myMethod = "PATCH"; break;
+            case HttpMethod.OPTIONS: myMethod = "OPTIONS"; break;
+            case HttpMethod.CONNECT: myMethod = "CONNECT"; break;
+            case HttpMethod.TRACE: myMethod = "TRACE";
+        }
+        // Establish TCP connection:
+        let data=""
+        data = "AT+CIPSTART=\"SSL\",\"" + host + "\"," + port +",5" // Keep alive 5 min
+        writeToSerial(data, pauseBaseValue * 16)
+        data = myMethod + " " + urlPath + " HTTPS/1.1" + "\u000D" + "\u000A"
+            + "Host: " + host + "\u000D" + "\u000A"
+        if (headers && headers.length > 0) {
+            data += headers + "\u000D" + "\u000A"
+        }
+        if (data && data.length > 0) {
+            data += "\u000D" + "\u000A" + body + "\u000D" + "\u000A"
+        }
+        data += "\u000D" + "\u000A"
+        // Send data:
+        writeToSerial("AT+CIPSEND=" + (data.length + 2), pauseBaseValue * 10)
+        writeToSerial(data, pauseBaseValue * 10)
+        // Close TCP connection:
+        writeToSerial("AT+CIPCLOSE", pauseBaseValue * 10)
+     
+        /*
+        // Def: AT+HTTPCLIENT=<opt>,<content-type>,<"url">,[<"host">],[<"path">],<transport_type>[,<"data">][,<"http_req_header">][,<"http_req_header">][...]Sample: AT+HTTPCLIENT=2,0,"https://www.espressif.com/sites/all/themes/espressif/images/about-us/solution-platform.jpg",,,2
+        //data ='AT+HTTPCLIENT=2,0,"https://www.espressif.com/sites/all/themes/espressif/images/about-us/solution-platform.jpg",,,2'
+        let urldata = "https://api.thingspeak.com/update?api_key=ICPZTSAEIMBWJDTK&field2=50"
+        let urllength = urldata.length
+        
+        writeToSerial("AT+HTTPURLCFG=" + urllength+ "," + "https://api.thingspeak.com/update?api_key=ICPZTSAEIMBWJDTK&field2=50", pauseBaseValue * 3)
+        data ='AT+HTTPCLIENT=2,3,"",,,2'
+        // method 2 = GET
+        // content-type 3 = text/xml
+        // url: https:// + ServerName + Path (Full URL)
+        // transport type 2 = HTTP_TRANSPORT_OVER_SSL
+        
+        writeToSerial(data, pauseBaseValue * 3)
+        */
+  }
+
+
     /**
      * Line separator. It's used when headers or body are multiline.
      */
