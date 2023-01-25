@@ -35,16 +35,12 @@ namespace WiFiBit {
     let pauseBaseValue: number = 1000
 
 
-
-
-
-
     /**
-     * Change HTTP method wait period.
-     * @param newPauseBaseValue Base value, eg: 1000
-     */
-    //% weight=80
-    //% blockId="changewait" block="New Wait ms" %newPauseBaseValue"
+       * Change HTTP method wait period.
+       * @param newPauseBaseValue Base value, eg: 1000
+       */
+        //% weight=200
+    //% blockId="wfb_wifi_ch_wait" block="New Wait ms %newPauseBaseValue"
 
     export function changeHttpMethodWaitPeriod(newPauseBaseValue: number): void {
         pauseBaseValue = newPauseBaseValue
