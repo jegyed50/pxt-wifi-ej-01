@@ -24,10 +24,6 @@ namespace WiFiBit {
      * @param expected_response Wait for this response.
      * @param timeout Timeout in milliseconds.
      */
-     //% subcategory="SSL_GET_EJ"
-    //% weight=30
-    //% blockGap=8
-    //% blockHidden=true
   
     export function sendCommand(command: string, expected_response: string = null, timeout: number = 100): boolean {
         // Wait a while from previous command.
@@ -89,10 +85,10 @@ namespace WiFiBit {
          */
     //% weight=30
     //% blockGap=8
-    //% blockHidden=false
     //% blockId=esp8266_send_command
     //% block="sendATCommand:command string %command|expected response %expected_response|timeout %timeout"
-    export function sendCommand2(command: string, expected_response: string = null, timeout: number = 100) {
+    export function sendCommand2(command: string, expected_response: string = null, timeout: number = 100) 
+    {
         // Wait a while from previous command.
         basic.pause(10)
 
@@ -105,7 +101,7 @@ namespace WiFiBit {
 
         // Don't check if expected response is not specified.
         if (expected_response == null) {
-            return true
+            return 
         }
 
         // Wait and verify the response.
@@ -140,7 +136,7 @@ namespace WiFiBit {
             }
         }
 
-       return true
+       return 
     }
 
     /**
@@ -162,13 +158,29 @@ namespace WiFiBit {
      * @param URL_PATH Az URL szerver név vagy IP cím utáni része
      * 
      */
-    //% subcategory="SSL_GET_EJ"
     //% weight=29
     //% blockGap=8
-    //% blockId=SSL_GET
-    //% block="GET SSL:SERVER_NAME_OR_IP %SERVER_NAME_OR_IP|SERVER_PORT %SERVER_PORT|Server Path %URL_PATH"
-    export function SSL_GET_EJ(SERVER_NAME_OR_IP: string, SERVER_PORT: number, URL_PATH: string) {
-
+    //% blockId=TCP_OR_SSL
+    //% block="GET TCP_OR_SSL:Execute method %METHOD| SERVER_NAME_OR_IP %SERVER_NAME_OR_IP| HTTP (TCP) or HTTPS (SSL/TLS) %TCP_OR_SSL| SERVER_PORT %SERVER_PORT|Server Path %URL_PATH"
+    export function SSL_GET_EJ(method: HttpMethod,SERVER_NAME_OR_IP: string, TCP_OR_SSL:TCPorSSL ,SERVER_PORT: number, URL_PATH: string) {
+        let myMethod: string
+ 
+        switch (method) {
+            case HttpMethod.GET: myMethod = "GET"; break;
+            case HttpMethod.POST: myMethod = "POST"; break;
+            case HttpMethod.PUT: myMethod = "PUT"; break;
+            case HttpMethod.HEAD: myMethod = "HEAD"; break;
+            case HttpMethod.DELETE: myMethod = "DELETE"; break;
+            case HttpMethod.PATCH: myMethod = "PATCH"; break;
+            case HttpMethod.OPTIONS: myMethod = "OPTIONS"; break;
+            case HttpMethod.CONNECT: myMethod = "CONNECT"; break;
+            case HttpMethod.TRACE: myMethod = "TRACE";
+        }
+        let myTCPorSSL: string
+        switch (TCP_OR_SSL) {
+            case TCPorSSL.TCP: myTCPorSSL = "TCP"; break;
+            case TCPorSSL.SSL: myTCPorSSL = "SSL";
+        }
         // Reset the upload successful flag.
         SSLMessageSent = false
 
@@ -177,7 +189,13 @@ namespace WiFiBit {
 
         // Connect to HTTPS Server. Return if failed.
         //    if (sendCommand("AT+CIPSTART=\"SSL\",\"" + SERVER_NAME_OR_IP + "\", + SERVER_PORT +\", null, 10000) == false) return
-        sendCommand("AT+CIPSTART=\"SSL\",\"" + SERVER_NAME_OR_IP + "\",443", "OK", 10000)
+        if (myTCPorSSL == 'TCP'){
+            sendCommand("AT+CIPSTART=\"SSL\",\"" + SERVER_NAME_OR_IP + "\",443", "OK", 10000)
+        }
+        else{
+            sendCommand("AT+CIPSTART=\"SSL\",\"" + SERVER_NAME_OR_IP + "\",443", "OK", 10000)
+        }
+       
         // apex.oracle.com
         // /pls/apex/f?p=86511:6::application_process=log_data_01:::p6_field1,p6_field2,p6_field3,p6_field4,p6_field5,p6_field6,p6_field7,p6_field8:300030.0030003,600060.0060006,900090.0090009,1200120.0120012,1500150.0150015,1800180.0180018,2100210.0210021,2400240.0240024
 

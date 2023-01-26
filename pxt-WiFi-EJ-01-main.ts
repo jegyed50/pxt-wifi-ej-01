@@ -18,6 +18,10 @@ enum Newline {
     CR
 }
 
+enum TCPorSSL {
+    TCP,
+    SSL
+}
 let pauseBaseValue: number = 1000
 /**
  * WiFi:bit commands.
