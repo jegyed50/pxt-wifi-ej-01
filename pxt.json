@@ -10,7 +10,8 @@
         "main.blocks",
         "main.ts",
         "README.md",
-        "pxt-WiFi-EJ-01-main.ts"
+        "pxt-WiFi-EJ-01-main.ts",
+        "pxt-WiFi-EJ-01-main-SSL.ts"
     ],
     "testFiles": [],
     "targetVersions": {
