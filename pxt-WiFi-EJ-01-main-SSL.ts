@@ -24,8 +24,11 @@ namespace WiFiBit {
      * @param expected_response Wait for this response.
      * @param timeout Timeout in milliseconds.
      */
+     //% subcategory="SSL_GET_EJ"
+    //% weight=30
+    //% blockGap=8
     //% blockHidden=true
-    //% blockId=esp8266_send_command
+  
     export function sendCommand(command: string, expected_response: string = null, timeout: number = 100): boolean {
         // Wait a while from previous command.
         basic.pause(10)
@@ -77,12 +80,72 @@ namespace WiFiBit {
         return result
     }
 
+    /**
+         * Send AT command and wait for response.
+         * Return true if expected response is received.
+         * @param command The AT command without the CRLF.
+         * @param expected_response Wait for this response.
+         * @param timeout Timeout in milliseconds.
+         */
+    //% weight=30
+    //% blockGap=8
+    //% blockHidden=false
+    //% blockId=esp8266_send_command
+    //% block="sendATCommand:command string %command|expected response %expected_response|timeout %timeout"
+    export function sendCommand2(command: string, expected_response: string = null, timeout: number = 100) {
+        // Wait a while from previous command.
+        basic.pause(10)
 
+        // Flush the Rx buffer.
+        serial.readString()
+        rxData = ""
+
+        // Send the command and end with "\r\n".
+        serial.writeString(command + "\r\n")
+
+        // Don't check if expected response is not specified.
+        if (expected_response == null) {
+            return true
+        }
+
+        // Wait and verify the response.
+        let result = false
+        let timestamp = input.runningTime()
+        while (true) {
+            // Timeout.
+            if (input.runningTime() - timestamp > timeout) {
+                result = false
+                break
+            }
+
+            // Read until the end of the line.
+            rxData += serial.readString()
+            if (rxData.includes("\r\n")) {
+                // Check if expected response received.
+                if (rxData.slice(0, rxData.indexOf("\r\n")).includes(expected_response)) {
+                    result = true
+                    break
+                }
+
+                // If we expected "OK" but "ERROR" is received, do not wait for timeout.
+                if (expected_response == "OK") {
+                    if (rxData.slice(0, rxData.indexOf("\r\n")).includes("ERROR")) {
+                        result = false
+                        break
+                    }
+                }
+
+                // Trim the Rx data before loop again.
+                rxData = rxData.slice(rxData.indexOf("\r\n") + 2)
+            }
+        }
+
+       return true
+    }
 
     /**
      * Return true if the SSL message was sent successfully.
      */
-    //% subcategory="SSL_GET_EJ"
     //% weight=30
     //% blockGap=8
     //% blockId=esp8266_is_SSL_message_sent
@@ -114,16 +177,16 @@ namespace WiFiBit {
 
         // Connect to HTTPS Server. Return if failed.
         //    if (sendCommand("AT+CIPSTART=\"SSL\",\"" + SERVER_NAME_OR_IP + "\", + SERVER_PORT +\", null, 10000) == false) return
-        sendCommand("AT+CIPSTART=\"SSL\",\"" + "apex.oracle.com" + "\",443", "OK", 10000)
+        sendCommand("AT+CIPSTART=\"SSL\",\"" + SERVER_NAME_OR_IP + "\",443", "OK", 10000)
         // apex.oracle.com
         // /pls/apex/f?p=86511:6::application_process=log_data_01:::p6_field1,p6_field2,p6_field3,p6_field4,p6_field5,p6_field6,p6_field7,p6_field8:300030.0030003,600060.0060006,900090.0090009,1200120.0120012,1500150.0150015,1800180.0180018,2100210.0210021,2400240.0240024
 
         // g6d9abcb7cf856d-jegyed50db21c.adb.uk-london-1.oraclecloudapps.com
         // /ords/f?p=106:6::application_process=log_data_01:::p6_field1:-99.9
         // Construct the data to send.
-        let data = "GET " + "/pls/apex/f?p=86511:6::application_process=log_data_01:::p6_field1,p6_field2,p6_field3,p6_field4,p6_field5,p6_field6,p6_field7,p6_field8:44444444.0030003,600060.0060006,900090.0090009,1200120.0120012,1500150.0150015,1800180.0180018,2100210.0210021,2400240.0240024"
+        let data = "GET " + URL_PATH
         data += " HTTP/1.1\r\n"
-        data += "Host: " + "apex.oracle.com" + "\r\n"
+        data += "Host: " + SERVER_NAME_OR_IP + "\r\n"
 
 
 

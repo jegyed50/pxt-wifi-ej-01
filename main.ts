@@ -1,4 +1,5 @@
 input.onButtonPressed(Button.A, function () {
+    led.unplot(2, 1)
     led.plot(2, 0)
     WiFiBit.executeHttpMethod(
     HttpMethod.GET,
@@ -9,6 +10,7 @@ input.onButtonPressed(Button.A, function () {
     led.plot(2, 1)
 })
 input.onButtonPressed(Button.B, function () {
+    led.unplot(3, 1)
     led.plot(3, 0)
     WiFiBit.SSL_GET_EJ("apex.oracle.com", 443, "https://apex.oracle.com/pls/apex/f?p=86511:6::application_process=log_data_01:::p6_field1,p6_field2,p6_field3,p6_field4,p6_field5,p6_field6,p6_field7,p6_field8:300030.0030003,600060.0060006,900090.0090009,1200120.0120012,1500150.0150015,1800180.0180018,2100210.0210021,2400240.0240024")
     led.plot(3, 1)
