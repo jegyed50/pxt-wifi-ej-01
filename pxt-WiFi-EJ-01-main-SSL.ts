@@ -121,7 +121,7 @@ namespace WiFiBit {
         // g6d9abcb7cf856d-jegyed50db21c.adb.uk-london-1.oraclecloudapps.com
         // /ords/f?p=106:6::application_process=log_data_01:::p6_field1:-99.9
         // Construct the data to send.
-        let data = "GET " + "/pls/apex/f?p=86511:6::application_process=log_data_01:::p6_field1,p6_field2,p6_field3,p6_field4,p6_field5,p6_field6,p6_field7,p6_field8:300030.0030003,600060.0060006,900090.0090009,1200120.0120012,1500150.0150015,1800180.0180018,2100210.0210021,2400240.0240024"
+        let data = "GET " + "/pls/apex/f?p=86511:6::application_process=log_data_01:::p6_field1,p6_field2,p6_field3,p6_field4,p6_field5,p6_field6,p6_field7,p6_field8:44444444.0030003,600060.0060006,900090.0090009,1200120.0120012,1500150.0150015,1800180.0180018,2100210.0210021,2400240.0240024"
         data += " HTTP/1.1\r\n"
         data += "Host: " + "apex.oracle.com" + "\r\n"
 
